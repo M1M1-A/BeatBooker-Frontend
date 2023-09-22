@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Login() {
+function Login({navigate}) {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -27,7 +27,7 @@ function Login() {
       });
 
       if (response.status === 200) {
-        window.location.href = '/';
+        navigate("/")
       } 
       
     } catch (error) {
@@ -40,7 +40,7 @@ function Login() {
       <h2 data-testid='login-heading'>Login</h2>
       <form onSubmit={handleFormSubmit}>
         <div>
-          <label htmlFor="username" data-testid='username'>Username</label>
+          <label htmlFor="username" data-testid='username'>username</label>
           <input
             data-testid="username-input"
             type="text"
@@ -62,7 +62,7 @@ function Login() {
           />
         </div>
         <div>
-          <button data-testid='login-button' type="submit">Login</button>
+          <button id='login-button' type="submit">Login</button>
         </div>
       </form>
     </div>
