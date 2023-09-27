@@ -1,27 +1,42 @@
 import React, { useState } from 'react';
 
 const formValues = [
-    { id: 1, name: 'username', type: 'text' },
-    { id: 2, name: 'password', type: 'password' },
-    { id: 3, name: 'confirm_password', type: 'password' }, 
-    { id: 4, name: 'email', type: 'email' },
-    { id: 5, name: 'first_name', type: 'text' },
-    { id: 6, name: 'last_name', type: 'text' },
+    { id: 1, name: 'name', type: 'text', display: 'Username'},
+    { id: 2, name: 'password', type: 'password', display: 'Password' },
+    { id: 3, name: 'confirm_password', type: 'password', display: 'Confirm Password' }, 
+    { id: 4, name: 'email', type: 'email', display: 'Email' },
+    { id: 5, name: 'firstname', type: 'text', display: 'First Name' },
+    { id: 6, name: 'lastname', type: 'text', display: 'Last Name' },
 ];
+
+const API_URL = process.env.REACT_APP_LOCAL_BACKEND_URL;
 
 function SignUp({ navigate }) {
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         password: '',
         confirm_password: '', 
         email: '',
-        first_name: '',
-        last_name: '',
+        firstname: '',
+        lastname: '',
     });
+
+    
 
     const emailIsValid = formData.email.includes('@') && formData.email.includes('.');
     const passwordsMatch = formData.password === formData.confirm_password;
-    const isFormValid = passwordsMatch && formData.username && emailIsValid;
+    const passwordIsValid = formData.password.length >= 8;
+    const isFormValid = passwordsMatch && formData.name && emailIsValid && passwordIsValid;
+    const errorMessages = [];
+    if (!passwordsMatch) {
+        errorMessages.push('Passwords do not match');
+    }
+    if (!passwordIsValid) {
+        errorMessages.push('Password must be at least 8 characters');
+    }
+    if (!emailIsValid) {
+        errorMessages.push('Email is not valid');
+    }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -35,7 +50,7 @@ function SignUp({ navigate }) {
         e.preventDefault();
 
         try {
-            const response = await fetch('/signup/', {
+            const response = await fetch(`${API_URL}api/users/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,8 +58,8 @@ function SignUp({ navigate }) {
                 body: JSON.stringify(formData),
             });
 
-            if (response.status === 200) {
-                navigate('/');
+            if (response.status === 201) {
+                navigate('/login');
             }
         } catch (error) {
             console.error('An error occurred:', error);
@@ -59,7 +74,7 @@ function SignUp({ navigate }) {
                     {formValues.map((formValue) => (
                         <div key={formValue.id}>
                             <label htmlFor={formValue.name} data-testid={formValue.name}>
-                                {formValue.name.replace('_', ' ')} 
+                                {formValue.display} 
                             </label>
                             <input
                                 data-testid={`${formValue.name}-input`}
@@ -71,16 +86,11 @@ function SignUp({ navigate }) {
                             />
                         </div>
                         ))}
-                        {!passwordsMatch && (
-                            <div data-testid='password_error'>
-                                Passwords do not match
+                    {errorMessages.map((errorMessage) => (
+                        <div key={errorMessage} data-testid={`${errorMessage}-error`}>
+                            {errorMessage}
                             </div>
-                        )}
-                        {!emailIsValid && (
-                            <div data-testid='email_error'>
-                                Email is not valid
-                                </div>
-                        )}
+                        ))}
 
                 </div>
                 <button type='submit' id='signup-button' disabled={!isFormValid}>
