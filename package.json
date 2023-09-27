@@ -17,7 +17,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "npx cypress run --component && cypress run",
-    "test:unit": "jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
