@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const formValues = [
-    { id: 1, name: 'name', type: 'text', display: 'Username'},
+    { id: 1, name: 'username', type: 'text', display: 'Username'},
     { id: 2, name: 'password', type: 'password', display: 'Password' },
     { id: 3, name: 'confirm_password', type: 'password', display: 'Confirm Password' }, 
     { id: 4, name: 'email', type: 'email', display: 'Email' },
@@ -9,11 +9,11 @@ const formValues = [
     { id: 6, name: 'lastname', type: 'text', display: 'Last Name' },
 ];
 
-const API_URL = process.env.REACT_APP_LOCAL_BACKEND_URL;
+// const API_URL = process.env.REACT_APP_LOCAL_BACKEND_URL;
 
 function SignUp({ navigate }) {
     const [formData, setFormData] = useState({
-        name: '',
+        username: '',
         password: '',
         confirm_password: '', 
         email: '',
@@ -26,7 +26,7 @@ function SignUp({ navigate }) {
     const emailIsValid = formData.email.includes('@') && formData.email.includes('.');
     const passwordsMatch = formData.password === formData.confirm_password;
     const passwordIsValid = formData.password.length >= 8;
-    const isFormValid = passwordsMatch && formData.name && emailIsValid && passwordIsValid;
+    const isFormValid = passwordsMatch && formData.username && emailIsValid && passwordIsValid;
     const errorMessages = [];
     if (!passwordsMatch) {
         errorMessages.push('Passwords do not match');
@@ -37,6 +37,22 @@ function SignUp({ navigate }) {
     if (!emailIsValid) {
         errorMessages.push('Email is not valid');
     }
+
+    const [csrfToken, setCsrfToken] = useState('');
+
+    useEffect(() => {
+        async function fetchCsrfToken() {
+            try {
+                const response = await fetch('/get-token/'); 
+                const data = await response.json();
+                setCsrfToken(data.csrf_token);
+            } catch (error) {
+                console.error('Failed to fetch CSRF token:', error);
+            }
+            }
+        
+            fetchCsrfToken();
+        }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -50,10 +66,11 @@ function SignUp({ navigate }) {
         e.preventDefault();
 
         try {
-            const response = await fetch(`${API_URL}api/users/`, {
+            const response = await fetch('api/users/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
                 },
                 body: JSON.stringify(formData),
             });
