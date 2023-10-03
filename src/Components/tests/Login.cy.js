@@ -18,7 +18,7 @@ describe('Login Component', () => {
         password: "password"
       };
   
-      expect(req.headers['content-type']).to.include('application/json');
+      expect(req.headers['content-type']).to.include('application/x-www-form-urlencoded');
   
       req.reply({ status: 200, body: "Login successful" });
     }).as("loginRequest");

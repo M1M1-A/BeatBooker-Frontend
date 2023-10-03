@@ -1,3 +1,9 @@
+## Dependencies
+
+### `npm i`
+
+### `cypress install`
+
 
 ## Available Scripts
 
@@ -12,6 +18,8 @@ The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
 ### `npm test`
+OR
+### `npx cypress open`
 
 Launches the cypress unit and E2E tests. You must start the backend and frontend servers for these to pass.
 It also requires a .env in the frontend root directory with the REACT_APP_LOCAL_BACKEND_URL set to the IP of the backend server (normally REACT_APP_LOCAL_BACKEND_URL=http://127.0.0.1:8000/)
