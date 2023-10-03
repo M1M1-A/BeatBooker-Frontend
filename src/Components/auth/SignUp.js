@@ -66,7 +66,7 @@ function SignUp({ navigate }) {
         e.preventDefault();
 
         try {
-            const response = await fetch('api/users/', {
+            const response = await fetch('/signup/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ function SignUp({ navigate }) {
                 body: JSON.stringify(formData),
             });
 
-            if (response.status === 201) {
+            if (response.status === 200) {
                 navigate('/login');
             }
         } catch (error) {

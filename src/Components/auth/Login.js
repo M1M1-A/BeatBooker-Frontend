@@ -44,9 +44,6 @@ function Login({ navigate }) {
         body: formBody,
       });
 
-      console.log('form data', formData)
-      console.log("status code", response.status)
-
       if (response.status === 200) {
         navigate('/');
       } else {
